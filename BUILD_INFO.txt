@@ -1,0 +1,10 @@
+SysTrayMeter Modern 1.0.3 x64
+Build: MinGW-w64 GCC 13.2.0, Linux cross-build
+Compiler warnings: none (-Wall -Wextra -Wpedantic)
+Runtime: Windows system DLLs only, static GCC/C++ runtime.
+Tests: PASS last-four-digit formatting, zero padding, 64-bit input, numeric-only width, percentage bounds.
+Rendering: 1px right margin and 1px top/bottom insets; 5px/7px digit height.
+Windows runtime/tray validation: NOT RUN for this version.
+EXE size: 299008 bytes
+EXE SHA256: f69bbf338f2a9ab900f280cfe74f5c714886224ec4e934b2a0cc202ffa94865e
+Resources: PASS all four original icon payloads embedded; CompanyName and version strings verified.
