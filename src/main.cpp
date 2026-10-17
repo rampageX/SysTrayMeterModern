@@ -99,15 +99,37 @@ const char* shortGlyph(wchar_t ch) {
  case L'-':return "000000111000000";default:return "000000000000000";
  }
 }
-void textPixels(COLORREF* px,const std::wstring& s,int y,int height,COLORREF color) {
- const int width=s.empty()?0:int(s.size())*4-1;
- int x=15-width; // One pixel of background at the shared right edge.
+// CPU uses wider 4-pixel digits with a single blank column between them.
+const char* cpuGlyph(wchar_t ch,int height) {
+ static const char* small[]={
+  "11111001100110011111", "00100110001000100111",
+  "11110001111110001111", "11110001111100011111",
+  "10011001111100010001", "11111000111100011111",
+  "11111000111110011111", "11110001001001000100",
+  "11111001111110011111", "11111001111100011111"
+ };
+ static const char* tall[]={
+  "1111100110011001100110011111", "0010011000100010001000100111",
+  "1111000100011111100010001111", "1111000100011111000100011111",
+  "1001100110011111000100010001", "1111100010001111000100011111",
+  "1111100010001111100110011111", "1111000100010010010001000100",
+  "1111100110011111100110011111", "1111100110011111000100011111"
+ };
+ if(ch>=L'0'&&ch<=L'9')return height==5?small[ch-L'0']:tall[ch-L'0'];
+ if(ch==L'-')return height==5?"00000000111100000000":"0000000000001111000000000000";
+ return height==5?"00000000000000000000":"0000000000000000000000000000";
+}
+void textPixels(COLORREF* px,const std::wstring& s,int y,int height,COLORREF color,bool ram) {
+ const int digitWidth=ram?3:4;
+ const int advance=digitWidth+1;
+ const int width=s.empty()?0:int(s.size())*advance-1;
+ int x=(ram?15:14)-width; // RAM: 1px right inset; CPU: 2px.
  for(auto c:s) {
-  const auto g=height==5?shortGlyph(c):glyph(c);
-  for(int yy=0;yy<height;++yy)for(int xx=0;xx<3;++xx)
-   if(g[yy*3+xx]=='1'&&x+xx>=0&&x+xx<16)
+  const auto g=ram?(height==5?shortGlyph(c):glyph(c)):cpuGlyph(c,height);
+  for(int yy=0;yy<height;++yy)for(int xx=0;xx<digitWidth;++xx)
+   if(g[yy*digitWidth+xx]=='1'&&x+xx>=0&&x+xx<16)
     px[(y+yy)*16+x+xx]=color;
-  x+=4;
+  x+=advance;
  }
 }
 HICON makeIcon() {
@@ -121,7 +143,7 @@ HICON makeIcon() {
   std::wstring label;
   if(ram && cfg.ram)label=memOK?meter::memoryText(cfg.ram==1?mem.ullAvailPhys:mem.ullTotalPhys-mem.ullAvailPhys):L"--";
   if(!ram && cfg.cpu)label=cpuOK?std::to_wstring(meter::percent(cfg.cpu==1?100-cpu:cpu)):L"--";
-  textPixels(px,label,y0+1,y1-y0-2,fg);
+  textPixels(px,label,y0+1,y1-y0-2,fg,ram);
  }
  int w=std::max(16,GetSystemMetrics(SM_CXSMICON)),h=std::max(16,GetSystemMetrics(SM_CYSMICON));
  BITMAPINFO bi{};bi.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);bi.bmiHeader.biWidth=w;bi.bmiHeader.biHeight=-h;bi.bmiHeader.biPlanes=1;bi.bmiHeader.biBitCount=32;bi.bmiHeader.biCompression=BI_RGB;

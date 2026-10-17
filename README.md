@@ -1,5 +1,7 @@
 # SysTrayMeter Modern
 
+![](src/OriVSModern_16x16.png) ![](src/OriVSModern.png)
+
 **一个托盘图标，同时看 CPU 和内存。**
 
 SysTrayMeter Modern 是用 C++ / Win32 独立重写的轻量 Windows 托盘监视器，灵感来自 2007 年的 SysTrayMeter。保留原版在 16×16 小图标中上下分区显示的设计，使用 64 位内存统计和 Windows CPU 性能计数器，适应大容量内存和现代多核处理器。
@@ -9,7 +11,7 @@ SysTrayMeter Modern 是用 C++ / Win32 独立重写的轻量 Windows 托盘监�
 ## 特点
 
 - **小巧直观**：一个图标显示两项指标，没有常驻仪表盘窗口。
-- **专用像素数字**：上下右对齐，右侧留 1 像素；默认上区字高 5 像素、下区 7 像素，上下各留 1 像素。
+- **专用像素数字**：上下右对齐，CPU 右侧留 2 像素、内存留 1 像素；默认上区字高 5 像素、下区 7 像素，上下各留 1 像素。CPU 使用 4 像素宽的专用数字，内存保持 3 像素宽，字间均留 1 像素空白；CPU 的 `100` 占 14 像素宽。
 - **按真实负载变色**：文字和背景分别支持多级阈值配色。
 - **大内存支持**：64 位容量统计，托盘数字采用末四位显示，悬停查看完整数值。
 - **整机 CPU 统计**：优先使用 Processor Utility，可切换传统 Processor Time。
@@ -191,3 +193,7 @@ g++ -std=c++17 src/tests.cpp -o tests
 感谢 jacky 于 2007 年发布的 SysTrayMeter 带来的精巧设计。本项目参考其上下分区的显示概念和主要 INI 键名，以 C++ / Win32 独立实现，并非修改或反编译旧版 EXE。配色沿用项目发起者提供的配置，EXE 图标由项目发起者提供。
 
 **Computers are fun, Yes!**
+
+## 许可证
+
+本项目采用 [MIT License](LICENSE)，允许使用、修改、再发布和商用；须保留版权声明和许可文本。
